@@ -2,9 +2,10 @@
   "name": "seam-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node api/index.ts"
+    "build": "tsc",
+    "start": "node dist/api/index.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.4",
     "ts-node": "^10.9.2",
+    "type-fest": "^4.26.1",
     "typescript": "^5.6.2"
   }
 }

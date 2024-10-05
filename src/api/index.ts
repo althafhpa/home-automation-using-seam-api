@@ -34,7 +34,10 @@ app.get('/get-client-session-token', async (req, res) => {
     res.json({ clientSessionToken: clientSession.token });
   } catch (error) {
     console.error('Error handling client session:', error);
-    res.status(500).json({ error: 'Failed to handle client session', details: error.message });
+    res.status(500).json({
+      error: 'Failed to handle client session',
+      details: error instanceof Error ? error.message : String(error)
+    });
   }
 });
 
