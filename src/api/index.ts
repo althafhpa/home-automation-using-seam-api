@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 
 const corsOptions = {
-  origin: 'https://seam-frontend-zeta.vercel.app',
+  origin: 'https://frontend-vuejs.vercel.app',
   optionsSuccessStatus: 200
 };
 

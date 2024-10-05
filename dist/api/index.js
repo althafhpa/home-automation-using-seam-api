@@ -19,7 +19,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const corsOptions = {
-    origin: 'https://seam-frontend-zeta.vercel.app',
+    origin: 'https://frontend-vuejs.vercel.app',
     optionsSuccessStatus: 200
 };
 app.use((0, cors_1.default)(corsOptions));
