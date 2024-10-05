@@ -7,7 +7,15 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200
+};
+
+app.options('*', cors(corsOptions));
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 const seam = new Seam(process.env.SEAM_API_KEY);
