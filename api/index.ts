@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { Seam } from 'seam';
+import { Seam } from 'seamapi';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -12,30 +12,22 @@ app.use(express.json());
 
 const seam = new Seam(process.env.SEAM_API_KEY);
 
-app.post('/get-client-session-token', async (req, res) => {
+console.log('Seam API Key:', process.env.SEAM_API_KEY ? 'Present' : 'Missing');
+
+app.get('/get-client-session-token', async (req, res) => {
   try {
-    const userId = req.body.userId || 'single_user_11';
+    const userId = req.query.userId as string || 'single_user_11';
+    console.log(`Attempting to get/create session for user: ${userId}`);
 
-    let clientSession;
-    try {
-      clientSession = await seam.clientSessions.get({
-        user_identifier_key: userId
-      });
-    } catch (error) {
-      if (error.message.includes('not found')) {
-        clientSession = await seam.clientSessions.create({
-          user_identifier_key: userId,
-          expires_at: new Date(Date.now() + 3600 * 1000) // 1 hour from now
-        });
-      } else {
-        throw error;
-      }
-    }
+    const clientSession = await seam.clientSessions.getOrCreate({
+      user_identifier_key: userId,
+    });
 
-    res.json({ clientSessionToken: clientSession.client_session_id });
+    console.log('Client session obtained successfully');
+    res.json({ clientSessionToken: clientSession.token });
   } catch (error) {
     console.error('Error handling client session:', error);
-    res.status(500).json({ error: 'Failed to handle client session' });
+    res.status(500).json({ error: 'Failed to handle client session', details: error.message });
   }
 });
 
