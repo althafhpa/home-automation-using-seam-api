@@ -12,22 +12,6 @@ app.use(express.json());
 
 const seam = new Seam(process.env.SEAM_API_KEY);
 
-let apiUrl: string;
-
-const startServer = () => {
-  const server = app.listen(0, () => {
-    const port = server.address().port;
-    const host = process.env.HOST || 'localhost';
-    const protocol = process.env.PROTOCOL || 'http';
-    const localUrl = `${protocol}://${host}:${port}`;
-    apiUrl = process.env.API_URL || localUrl;
-
-    console.log(`Server running at: ${apiUrl}`);
-    console.log(`Get client session token at: ${apiUrl}/get-client-session-token`);
-    console.log(`Get devices at: ${apiUrl}/get-devices`);
-  });
-};
-
 app.post('/get-client-session-token', async (req, res) => {
   try {
     const userId = req.body.userId || 'single_user_11';
@@ -41,7 +25,7 @@ app.post('/get-client-session-token', async (req, res) => {
       if (error.message.includes('not found')) {
         clientSession = await seam.clientSessions.create({
           user_identifier_key: userId,
-          expires_in: 3600
+          expires_at: new Date(Date.now() + 3600 * 1000) // 1 hour from now
         });
       } else {
         throw error;
