@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Device Nickname</title>
+</head>
+<body>
+    <h1>Update Device Nickname</h1>
+    <select id="deviceSelect"></select>
+    <!-- <input type="text" id="nicknameInput" placeholder="New Nickname">
+    <button onclick="updateNickname()">Update</button> -->
+
+    <input type="text" id="displayNameInput" placeholder="New Display Name">
+    <button onclick="updateDisplayName()">Update</button>
+
+    <script>
+       async function loadDevices() {
+            const response = await fetch('/get-devices');
+            const data = await response.json();
+            console.log('Devices data:', data);
+            const select = document.getElementById('deviceSelect');
+            data.devices.forEach(device => {
+                console.log('Device:', device);
+                const option = document.createElement('option');
+                option.value = device.id || device.device_id;
+                option.textContent = device.name || device.nickname || device.id || device.device_id;
+                select.appendChild(option);
+            });
+        }
+
+        async function updateDisplayName() {
+            const deviceId = document.getElementById('deviceSelect').value;
+            const displayName = document.getElementById('displayNameInput').value;
+            const response = await fetch('/update-device-display-name', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deviceId, display_name: displayName })
+            });
+            const result = await response.json();
+            alert(result.message);
+        }
+
+
+        async function updateNickname() {
+            const deviceId = document.getElementById('deviceSelect').value;
+            const nickname = document.getElementById('nicknameInput').value;
+            try {
+                    const response = await fetch('/update-device-nickname', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ deviceId, nickname })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Server error');
+                    }
+                    const result = await response.json();
+                    alert(result.message || 'Update successful');
+                } catch (error) {
+                    alert('Failed to update nickname: ' + error.message);
+                }
+        }
+
+        loadDevices();
+    </script>
+</body>
+</html>

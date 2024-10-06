@@ -4,8 +4,9 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/api/index.js"
+    "copy-public": "cp -R public dist/",
+    "build": "tsc && npm run copy-public",
+    "serve": "npm run build && node dist/api/index.js"
   },
   "keywords": [],
   "author": "",

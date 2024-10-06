@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const seamapi_1 = require("seamapi");
 const dotenv_1 = __importDefault(require("dotenv"));
+const path_1 = __importDefault(require("path"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const corsOptions = {
@@ -24,6 +25,7 @@ const corsOptions = {
 };
 app.use((0, cors_1.default)(corsOptions));
 app.options('*', (0, cors_1.default)(corsOptions));
+app.use(express_1.default.static(path_1.default.join(__dirname, '../../dist/public')));
 app.use(express_1.default.json());
 const seam = new seamapi_1.Seam(process.env.SEAM_API_KEY);
 console.log('Seam API Key:', process.env.SEAM_API_KEY ? 'Present' : 'Missing');
@@ -55,6 +57,53 @@ app.get('/get-devices', (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ error: 'Failed to fetch devices' });
     }
 }));
+app.post('/update-device-nickname', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield handleUpdateDeviceNickname(req, res);
+}));
+function handleUpdateDeviceNickname(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { deviceId, nickname } = req.body;
+            if (!deviceId || !nickname) {
+                return res.status(400).json({ error: 'Device ID and nickname are required' });
+            }
+            yield seam.devices.update({
+                device_id: req.body.deviceId,
+                nickname: req.body.nickname
+            });
+            res.json({ message: 'Device nickname updated successfully' });
+        }
+        catch (error) {
+            console.error('Error updating device nickname:', error);
+            res.status(500).json({ error: 'Failed to update device nickname' });
+        }
+    });
+}
+app.get('/update-nickname', (req, res) => {
+    res.sendFile(path_1.default.join(__dirname, '../../dist/public/update-nickname.html'));
+});
+app.post('/update-device-display-name', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield handleUpdateDeviceDisplayName(req, res);
+}));
+function handleUpdateDeviceDisplayName(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { deviceId, display_name } = req.body;
+            if (!deviceId || !display_name) {
+                return res.status(400).json({ error: 'Device ID and Device Name are required' });
+            }
+            yield seam.devices.update({
+                device_id: req.body.deviceId,
+                display_name: req.body.display_name
+            });
+            res.json({ message: 'Device name updated successfully' });
+        }
+        catch (error) {
+            console.error('Error updating device name:', error);
+            res.status(500).json({ error: 'Failed to update device name' });
+        }
+    });
+}
 if (process.env.NODE_ENV !== 'production') {
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
